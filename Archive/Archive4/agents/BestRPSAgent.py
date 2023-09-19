@@ -2,7 +2,7 @@
 from .BaseAgent import BaseAgent
 
 class BestRPSAgent(BaseAgent):
-    def __init__(self, **kwargs):
+    def __init__(self):
         """Initializes the BestRPSAgent by calling the superclass constructor with its name."""
         super().__init__(name="BestRPSAgent")
 

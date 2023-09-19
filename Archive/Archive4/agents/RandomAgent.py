@@ -3,7 +3,7 @@ from .BaseAgent import BaseAgent
 import random
 
 class RandomAgent(BaseAgent):
-    def __init__(self, **kwargs):
+    def __init__(self):
         """Initializes the RandomAgent by calling the superclass constructor with its name."""
         super().__init__(name="RandomAgent")
 

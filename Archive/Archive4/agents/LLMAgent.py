@@ -1,22 +1,16 @@
-# import openai
-import os
 
 from agents.BaseAgent import BaseAgent
-# # import openai
+import openai
 
 class LLMAgent(BaseAgent):
-    def __init__(self, api_key=None, **kwargs):
+    def __init__(self, api_key: str):
         super().__init__(name="LLMAgent")
-        self.api_key = api_key if api_key else os.getenv('OPENAI_API_KEY')
+        self.api_key = api_key
 
     def play_move(self, prompt: str) -> str:
-        # openai.api_key = self.api_key
+        openai.api_key = self.api_key
         try:
-            
-            response = type('', (), {})()
-            response.choices = [type('', (), {})()]
-            response.choices[0].text = 'rock'
-
+            response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=10)
             move = response.choices[0].text.strip()
             return move
         except Exception as e:
