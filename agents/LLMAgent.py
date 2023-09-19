@@ -1,26 +1,24 @@
 
+from agents.BaseAgent import BaseAgent
 import openai
 
 class LLMAgent(BaseAgent):
-    def __init__(self, model="gpt-4-0613", max_tokens=7, temperature=0.5):
+    def __init__(self, api_key: str):
         super().__init__(name="LLMAgent")
-        self.model = model
-        self.max_tokens = max_tokens
-        self.temperature = temperature
+        self.api_key = api_key
 
-    def play_move(self, opponent_move):
-        if opponent_move in ["R", "P", "S"]:
-            self.update_history(opponent_move)
+    def play_move(self, prompt: str) -> str:
+        openai.api_key = self.api_key
+        try:
+            response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=10)
+            move = response.choices[0].text.strip()
+            return move
+        except Exception as e:
+            print(f"Error interfacing with OpenAI API: {e}")
+            # Fallback to a random move in case of an error
+            import random
+            return random.choice(["R", "P", "S"])
 
-        rps_sequence = " ".join(self.history)
-        
-        response = openai.Completion.create(
-            model=self.model,
-            prompt=f"RPS sequence: {rps_sequence}. What's the next move?",
-            max_tokens=self.max_tokens,
-            temperature=self.temperature
-        )
-
-        next_move = response.choices[0].text.strip()
-
-        return next_move
+    def update_api_key(self, new_api_key: str):
+        """Update the API key for the LLMAgent."""
+        self.api_key = new_api_key
