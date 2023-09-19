@@ -1,30 +1,33 @@
-import random
-import os
 import openai
 
 # COMMENTER ENTITY:
-# inquiry: How does the LLM agent operate?
-# answer: The LLM agent interacts with the GPT-4 API, passing the history of moves as a context. It then predicts the next most probable move based on that context.
+# inquiry: Why are we using the `gpt-4-0613` model?
+# answer: The `gpt-4-0613` model is one of the latest and most efficient models from OpenAI for text generation tasks. It's designed to provide accurate predictions for tasks like ours.
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def llm_agent(prev_play, opponent_history=[]):
+def llm_agent(prev_play, opponent_history=[], model="gpt-4-0613", max_tokens=7, temperature=0.5):
+    # COMMENTER ENTITY:
+    # inquiry: Why are we maintaining a history of plays?
+    # answer: Maintaining a history helps the model in recognizing patterns and making more accurate predictions based on past data.
+    
     if prev_play in ["R", "P", "S"]:
         opponent_history.append(prev_play)
 
-    if len(opponent_history) == 0:
-        return random.choice(["R", "P", "S"])
+    rps_sequence = " ".join(opponent_history)
+    
+    # COMMENTER ENTITY:
+    # inquiry: How do we derive the prediction from the OpenAI API?
+    # answer: We pass the rps_sequence as a prompt to the model. The model then returns its prediction for the next move, which we extract and return.
 
-    rps_string = " ".join(opponent_history)
     response = openai.Completion.create(
-        model="gpt-4-0613",
-        prompt=f"RPS sequence: {rps_string}. What's the next move?",
-        max_tokens=5,
-        temperature=0.5
+        model=model,
+        prompt=f"RPS sequence: {rps_sequence}. What's the next move?",
+        max_tokens=max_tokens,
+        temperature=temperature
     )
-    next_move = response.choices[0].text.strip()
 
-    # PRINT CREATOR ENTITY:
-    print(f"LLM Agent uses GPT-4 prediction and suggests the move: {next_move}")
+    # Extracting the predicted move from the response
+    next_move = response.choices[0].text.strip()
 
     return next_move
